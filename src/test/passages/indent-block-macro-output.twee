@@ -1,0 +1,4 @@
+:: Test
+<<if $condition>>
+    content inside
+<</if>>

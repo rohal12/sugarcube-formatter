@@ -1,0 +1,62 @@
+{
+  "name": "sugarcube-formatter",
+  "displayName": "sugarcube-formatter",
+  "description": "format sugarcube twine code",
+  "version": "0.0.3",
+  "engines": {
+    "vscode": "^1.105.1"
+  },
+  "categories": [
+    "Formatters"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "twee",
+        "aliases": ["Twee", "SugarCube"],
+        "extensions": [".twee", ".tw"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "sugarcube-formatter.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "keywords": [
+      "twee",
+      "twee3",
+      "twee3-sugarcube-2",
+      "twine"
+  ],
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/rohal12/sugarcube-formatter.git"
+  },
+  "activationEvents": [
+    "workspaceContains:**/*.{tw,twee}",
+    "onLanguage:twee3-sugarcube-2",
+    "onLanguage:twee3"
+  ],
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.105.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "typescript-eslint": "^8.46.3",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2"
+  }
+}

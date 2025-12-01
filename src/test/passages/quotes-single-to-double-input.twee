@@ -1,0 +1,5 @@
+:: Test
+<<include 'Passage Name'>>
+<<set $var to 'hello world'>>
+
+:: Passage Name

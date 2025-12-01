@@ -1,0 +1,6 @@
+:: Test
+<<if $a>>
+    one
+<<else>>
+    two
+<</if>>

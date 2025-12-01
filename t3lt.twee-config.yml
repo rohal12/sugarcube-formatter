@@ -1,0 +1,7 @@
+sugarcube-2:
+  macros:
+    customcontainer:
+      name: customcontainer
+      container: true
+    subtag:
+      name: subtag

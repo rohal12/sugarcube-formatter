@@ -1,0 +1,6 @@
+:: Test
+<<if $a>>
+    <<if $b>>
+        nested
+    <</if>>
+<</if>>

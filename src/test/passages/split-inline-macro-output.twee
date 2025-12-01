@@ -1,0 +1,5 @@
+:: Test
+Some text.
+<<if $condition>>
+    content
+<</if>>

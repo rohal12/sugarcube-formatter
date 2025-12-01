@@ -1,0 +1,17 @@
+:: Test Passage 2
+This is a test passage. <<if $varfoo === 1>>
+"Hello"
+<<else>>
+"World"
+<</if>>
+<<customcontainer "argument">>payload<<subtag>>test<</customcontainer>>
+
+
+<<include 'Test Passage 2'>>
+<<include "Test Passage 2">>
+<<include "TestPassageOneWord">>
+    [[continue]]
+
+
+
+:: TestPassageOneWord

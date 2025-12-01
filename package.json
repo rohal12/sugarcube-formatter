@@ -2,7 +2,7 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "author": "rohal12",
   "publisher": "rohal12",
   "engines": {

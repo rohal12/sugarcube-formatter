@@ -453,32 +453,52 @@ export function formatSugarCubeDocument(
           // This is a JSON passage - output formatted JSON
           const jsonLines = formattedJson.split("\n");
 
-          // Process each content line, mapping to formatted JSON
-          for (let i = contentStartIndex; i < passageEndIndex; i++) {
-            const jsonLineIndex = i - contentStartIndex;
-            if (jsonLineIndex < jsonLines.length) {
-              const jsonLine = jsonLines[jsonLineIndex];
-              formattedLinesBySource.set(i, [jsonLine]);
-              outputLines.push(jsonLine);
-            } else {
-              // Extra source lines map to empty (JSON is more compact)
-              formattedLinesBySource.set(i, []);
+          // Find where the actual JSON content ends (before trailing empty lines)
+          let jsonContentEndIndex = passageEndIndex;
+          for (let i = passageEndIndex - 1; i >= contentStartIndex; i--) {
+            if (lines[i].trim() !== "") {
+              jsonContentEndIndex = i + 1;
+              break;
             }
           }
 
-          // If JSON has more lines than source, add them to the last source line
-          if (
-            jsonLines.length > contentLines.length &&
-            contentLines.length > 0
-          ) {
-            const lastSourceIndex = passageEndIndex - 1;
+          // Map formatted JSON to source lines (up to the end of actual JSON content)
+          const jsonSourceLines = jsonContentEndIndex - contentStartIndex;
+          for (let i = 0; i < jsonSourceLines; i++) {
+            const sourceLineIndex = contentStartIndex + i;
+            if (i < jsonLines.length) {
+              formattedLinesBySource.set(sourceLineIndex, [jsonLines[i]]);
+              outputLines.push(jsonLines[i]);
+            } else {
+              // Extra source lines within JSON content map to empty
+              formattedLinesBySource.set(sourceLineIndex, []);
+            }
+          }
+
+          // If JSON has more lines than source, add them to the last JSON source line
+          if (jsonLines.length > jsonSourceLines && jsonSourceLines > 0) {
+            const lastJsonSourceIndex = jsonContentEndIndex - 1;
             const existingLines =
-              formattedLinesBySource.get(lastSourceIndex) || [];
-            for (let i = contentLines.length; i < jsonLines.length; i++) {
+              formattedLinesBySource.get(lastJsonSourceIndex) || [];
+            for (let i = jsonSourceLines; i < jsonLines.length; i++) {
               existingLines.push(jsonLines[i]);
               outputLines.push(jsonLines[i]);
             }
-            formattedLinesBySource.set(lastSourceIndex, existingLines);
+            formattedLinesBySource.set(lastJsonSourceIndex, existingLines);
+          }
+
+          // Preserve trailing empty lines between JSON and next passage
+          // (but not at end of file - passageEndIndex < lines.length means there's a next passage)
+          if (passageEndIndex < lines.length) {
+            for (let i = jsonContentEndIndex; i < passageEndIndex; i++) {
+              formattedLinesBySource.set(i, [""]);
+              outputLines.push("");
+            }
+          } else {
+            // At end of file - just mark remaining lines as consumed
+            for (let i = jsonContentEndIndex; i < passageEndIndex; i++) {
+              formattedLinesBySource.set(i, []);
+            }
           }
 
           // Skip to end of passage (will be incremented by loop)

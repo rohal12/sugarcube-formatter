@@ -1,0 +1,7 @@
+:: Test
+<<if $condition>>
+  content inside
+<<else>>
+  other content
+<</if>>
+

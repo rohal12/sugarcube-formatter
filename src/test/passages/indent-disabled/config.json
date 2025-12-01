@@ -1,0 +1,7 @@
+{
+  "description": "Tests for indentationEnabled: false - no indentation",
+  "options": {
+    "indentationEnabled": false
+  }
+}
+

@@ -1,0 +1,7 @@
+:: Test
+<<if $condition>>
+  content with tab indent
+<<else>>
+  other content with tab
+<</if>>
+

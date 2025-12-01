@@ -1,0 +1,7 @@
+:: Test
+<<if $condition>>
+    content with 4-space indent
+<<else>>
+    other content with spaces
+<</if>>
+

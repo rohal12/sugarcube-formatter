@@ -103,7 +103,8 @@ function tokenizeLine(line: string, options: FormatterOptions): Token[] {
 
   // Split by macro tags <<...>> only, preserving the delimiters
   // This ensures HTML tags with single <> are not split
-  const macroPattern = /(<<\/?[^>]*>>)/g;
+  // Pattern allows > characters inside macros (e.g., >= comparisons)
+  const macroPattern = /(<<(?:\/?\w+)(?:[^>]|>[^>])*>>)/g;
   const parts = line.split(macroPattern);
 
   for (const part of parts) {
@@ -124,7 +125,8 @@ function tokenizeLine(line: string, options: FormatterOptions): Token[] {
     }
 
     // Check if this is an opening macro tag <<name...>>
-    const openingMatch = trimmed.match(/^<<(\w+)([^>]*)>>$/);
+    // Pattern allows > characters inside macros (e.g., >= comparisons)
+    const openingMatch = trimmed.match(/^<<(\w+)((?:[^>]|>[^>])*)>>$/);
     if (openingMatch) {
       const macroName = openingMatch[1];
       // Format macro arguments (convert quotes, remove unnecessary quotes)
@@ -169,7 +171,14 @@ export function formatSugarCubeDocument(
   const lines = text.split("\n");
   const outputLines: string[] = [];
   let indentLevel = 0;
-  const indentStr = "    "; // 4 spaces
+
+  // Build indent string based on settings
+  const indentStr = mergedOptions.indentationEnabled
+    ? mergedOptions.indentationStyle === "tabs"
+      ? "\t"
+      : " ".repeat(mergedOptions.indentationSize ?? 4)
+    : "";
+
   let seenFirstPassage = false;
 
   // Track which source line each output line comes from

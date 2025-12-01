@@ -2,7 +2,7 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "author": "rohal12",
   "publisher": "rohal12",
   "engines": {
@@ -40,6 +40,23 @@
           "enum": ["preserve", 0, 1, 2],
           "default": 2,
           "description": "Number of empty lines before passage headers: 'preserve' keeps original spacing, or 0/1/2 for specific line count"
+        },
+        "sugarcubeFormatter.indentationEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable or disable indentation of content inside block macros"
+        },
+        "sugarcubeFormatter.indentationStyle": {
+          "type": "string",
+          "enum": ["spaces", "tabs"],
+          "default": "spaces",
+          "description": "Indentation style: 'spaces' or 'tabs'"
+        },
+        "sugarcubeFormatter.indentationSize": {
+          "type": "number",
+          "enum": [2, 4],
+          "default": 4,
+          "description": "Number of spaces per indent level (only applies when indentationStyle is 'spaces')"
         }
       }
     }

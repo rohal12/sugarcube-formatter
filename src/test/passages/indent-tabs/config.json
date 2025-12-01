@@ -1,0 +1,7 @@
+{
+  "description": "Tests for indentationStyle: tabs",
+  "options": {
+    "indentationStyle": "tabs"
+  }
+}
+

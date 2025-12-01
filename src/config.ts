@@ -16,6 +16,18 @@ export type QuoteStyle = "double" | "single" | "preserve";
 export type EmptyLinesBeforePassages = "preserve" | 0 | 1 | 2;
 
 /**
+ * Indentation style option
+ * - "spaces": Use spaces for indentation (default)
+ * - "tabs": Use tabs for indentation
+ */
+export type IndentationStyle = "spaces" | "tabs";
+
+/**
+ * Indentation size option (number of spaces per indent level)
+ */
+export type IndentationSize = 2 | 4;
+
+/**
  * Formatter options that can be configured via VS Code settings.
  *
  * This interface is kept separate from vscode-specific code so it can be
@@ -28,6 +40,12 @@ export interface FormatterOptions {
   quoteStyle?: QuoteStyle;
   /** Number of empty lines before passage headers (default: 2) */
   emptyLinesBeforePassages?: EmptyLinesBeforePassages;
+  /** Enable or disable indentation of block macro content (default: true) */
+  indentationEnabled?: boolean;
+  /** Indentation style: "spaces" or "tabs" (default: "spaces") */
+  indentationStyle?: IndentationStyle;
+  /** Number of spaces per indent level when using spaces (default: 4) */
+  indentationSize?: IndentationSize;
 }
 
 /**
@@ -38,6 +56,9 @@ export const defaultOptions: Required<FormatterOptions> = {
   stripSingleWordQuotes: true,
   quoteStyle: "double",
   emptyLinesBeforePassages: 2,
+  indentationEnabled: true,
+  indentationStyle: "spaces",
+  indentationSize: 4,
 };
 
 /**

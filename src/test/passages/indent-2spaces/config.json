@@ -1,0 +1,7 @@
+{
+  "description": "Tests for indentationSize: 2 - two spaces per indent level",
+  "options": {
+    "indentationSize": 2
+  }
+}
+

@@ -2,7 +2,9 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.3",
+  "version": "0.0.4",
+  "author": "rohal12",
+  "publisher": "rohal12",
   "engines": {
     "vscode": "^1.105.1"
   },
@@ -45,6 +47,9 @@
   "repository": {
       "type": "git",
       "url": "https://github.com/rohal12/sugarcube-formatter.git"
+  },
+  "bugs": {
+      "url": "https://github.com/rohal12/sugarcube-formatter/issues"
   },
   "activationEvents": [
     "workspaceContains:**/*.{tw,twee}",

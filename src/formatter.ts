@@ -100,40 +100,48 @@ interface Token {
 
 function tokenizeLine(line: string, options: FormatterOptions): Token[] {
   const tokens: Token[] = [];
-  // Match: closing tags <</name>>, opening tags <<name...>>, or text content
-  const pattern = /<<\/(\w+)>>|<<(\w+)[^>]*>>|[^<]+|</g;
-  let match;
 
-  while ((match = pattern.exec(line)) !== null) {
-    const fullMatch = match[0].trim();
-    if (!fullMatch) {
+  // Split by macro tags <<...>> only, preserving the delimiters
+  // This ensures HTML tags with single <> are not split
+  const macroPattern = /(<<\/?[^>]*>>)/g;
+  const parts = line.split(macroPattern);
+
+  for (const part of parts) {
+    const trimmed = part.trim();
+    if (!trimmed) {
       continue;
     }
 
-    if (match[1]) {
-      // Closing tag <</name>>
+    // Check if this is a closing macro tag <</name>>
+    const closingMatch = trimmed.match(/^<<\/(\w+)>>$/);
+    if (closingMatch) {
       tokens.push({
-        value: fullMatch,
+        value: trimmed,
         type: "closing-macro",
-        macroName: match[1],
+        macroName: closingMatch[1],
       });
-    } else if (match[2]) {
-      // Opening tag <<name...>>
-      const macroName = match[2];
+      continue;
+    }
+
+    // Check if this is an opening macro tag <<name...>>
+    const openingMatch = trimmed.match(/^<<(\w+)([^>]*)>>$/);
+    if (openingMatch) {
+      const macroName = openingMatch[1];
       // Format macro arguments (convert quotes, remove unnecessary quotes)
-      const formattedValue = formatMacroArguments(fullMatch, options);
+      const formattedValue = formatMacroArguments(trimmed, options);
       tokens.push({
         value: formattedValue,
         type: "opening-macro",
         macroName,
       });
-    } else {
-      // Text content
-      tokens.push({
-        value: fullMatch,
-        type: "text",
-      });
+      continue;
     }
+
+    // Text content (includes HTML tags with single <>)
+    tokens.push({
+      value: trimmed,
+      type: "text",
+    });
   }
 
   return tokens;

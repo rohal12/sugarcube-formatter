@@ -2,7 +2,7 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "author": "rohal12",
   "publisher": "rohal12",
   "engines": {
@@ -81,6 +81,11 @@
           ],
           "default": 4,
           "description": "Number of spaces per indent level (only applies when indentationStyle is 'spaces')"
+        },
+        "sugarcubeFormatter.formatJsonPassages": {
+          "type": "boolean",
+          "default": true,
+          "description": "Format passages containing JSON with proper indentation"
         }
       }
     }

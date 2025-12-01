@@ -90,6 +90,96 @@ function detectBlockMacros(text: string): Set<string> {
 }
 
 /**
+ * Try to convert JavaScript object literal notation to JSON.
+ * This handles unquoted keys and trailing commas.
+ */
+function jsObjectToJson(content: string): string {
+  // Quote unquoted keys (identifiers followed by :)
+  // This regex matches: start of line/after { or , followed by whitespace, then an identifier, then :
+  let result = content.replace(
+    /(?<=^|[{,[\s])\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/gm,
+    '"$1":'
+  );
+
+  // Remove trailing commas before } or ]
+  result = result.replace(/,(\s*[}\]])/g, "$1");
+
+  return result;
+}
+
+/**
+ * Convert JSON back to JavaScript object literal notation.
+ * This unquotes keys that are valid identifiers.
+ */
+function jsonToJsObject(jsonContent: string, indentStr: string): string {
+  // Unquote keys that are valid identifiers
+  // Match: "identifier": at the start of a line (after whitespace)
+  return jsonContent.replace(
+    /^(\s*)"([a-zA-Z_$][a-zA-Z0-9_$]*)"\s*:/gm,
+    "$1$2:"
+  );
+}
+
+/**
+ * Try to format content as JSON if it's valid JSON.
+ * Returns the formatted JSON string or null if the content is not valid JSON.
+ */
+function tryFormatJson(content: string, indentStr: string): string | null {
+  const trimmed = content.trim();
+
+  // Quick check: must start with { or [
+  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(trimmed);
+    // Use the indent string for JSON formatting
+    const jsonIndent = indentStr || "    ";
+    return JSON.stringify(parsed, null, jsonIndent);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Try to format content as JavaScript object literal (used in Twee metadata passages).
+ * This handles unquoted keys and trailing commas.
+ * Returns the formatted content or null if it's not a valid JS object literal.
+ */
+function tryFormatJsObject(content: string, indentStr: string): string | null {
+  const trimmed = content.trim();
+
+  // Quick check: must start with { or [
+  if (!trimmed.startsWith("{") && !trimmed.startsWith("[")) {
+    return null;
+  }
+
+  // Check if it looks like JS object literal (has unquoted keys)
+  // Pattern: identifier followed by colon (not inside quotes)
+  const hasUnquotedKeys = /(?:^|[{,[\s])\s*[a-zA-Z_$][a-zA-Z0-9_$]*\s*:/m.test(
+    trimmed
+  );
+
+  if (!hasUnquotedKeys) {
+    return null;
+  }
+
+  try {
+    // Convert to JSON, parse, and format
+    const jsonContent = jsObjectToJson(trimmed);
+    const parsed = JSON.parse(jsonContent);
+    const jsonIndent = indentStr || "    ";
+    const formatted = JSON.stringify(parsed, null, jsonIndent);
+
+    // Convert back to JS object literal notation
+    return jsonToJsObject(formatted, indentStr);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Tokenize a line into macro tags and text content
  */
 interface Token {
@@ -299,6 +389,69 @@ export function formatSugarCubeDocument(
       outputLines.push(trimmedLine);
       formattedLinesBySource.set(lineIndex, outputForThisLine);
       indentLevel = 0;
+
+      // Check if this passage contains JSON content
+      if (mergedOptions.formatJsonPassages) {
+        // Find the end of this passage (next :: or end of file)
+        let passageEndIndex = lines.length;
+        for (let i = lineIndex + 1; i < lines.length; i++) {
+          if (lines[i].trim().startsWith("::")) {
+            passageEndIndex = i;
+            break;
+          }
+        }
+
+        // Collect passage content (skip leading/trailing empty lines for JSON detection)
+        const contentLines: string[] = [];
+        const contentStartIndex = lineIndex + 1;
+        for (let i = contentStartIndex; i < passageEndIndex; i++) {
+          contentLines.push(lines[i]);
+        }
+
+        // Try to format as JSON or JS object literal (metadata passages)
+        const contentStr = contentLines.join("\n");
+        const formattedJson =
+          tryFormatJson(contentStr, indentStr) ??
+          tryFormatJsObject(contentStr, indentStr);
+
+        if (formattedJson !== null) {
+          // This is a JSON passage - output formatted JSON
+          const jsonLines = formattedJson.split("\n");
+
+          // Process each content line, mapping to formatted JSON
+          for (let i = contentStartIndex; i < passageEndIndex; i++) {
+            const jsonLineIndex = i - contentStartIndex;
+            if (jsonLineIndex < jsonLines.length) {
+              const jsonLine = jsonLines[jsonLineIndex];
+              formattedLinesBySource.set(i, [jsonLine]);
+              outputLines.push(jsonLine);
+            } else {
+              // Extra source lines map to empty (JSON is more compact)
+              formattedLinesBySource.set(i, []);
+            }
+          }
+
+          // If JSON has more lines than source, add them to the last source line
+          if (
+            jsonLines.length > contentLines.length &&
+            contentLines.length > 0
+          ) {
+            const lastSourceIndex = passageEndIndex - 1;
+            const existingLines =
+              formattedLinesBySource.get(lastSourceIndex) || [];
+            for (let i = contentLines.length; i < jsonLines.length; i++) {
+              existingLines.push(jsonLines[i]);
+              outputLines.push(jsonLines[i]);
+            }
+            formattedLinesBySource.set(lastSourceIndex, existingLines);
+          }
+
+          // Skip to end of passage (will be incremented by loop)
+          lineIndex = passageEndIndex - 1;
+          continue;
+        }
+      }
+
       continue;
     }
 

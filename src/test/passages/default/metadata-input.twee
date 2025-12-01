@@ -1,0 +1,14 @@
+:: PassageMetadata [metadata]
+{
+    passage: "PassageMetadata",
+    storylet: "storylet_1",
+    title: "PassageMetadata",
+    all: [
+    { type: "dailyToggle", var: "TEST_VAR", value: false},
+    { type: "eval", eval: "Player.Resources.TEST_RESOURCE.current > 0"},
+    { type: "flag", var: "TEST_FLAG", value: false}
+    ],
+    sticky: true,
+    image_path: "Test/Image",
+    image_title: "Test Image",
+}

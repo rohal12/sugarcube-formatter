@@ -1,0 +1,8 @@
+:: JsonData [script]
+{"name":"test","value":123,"nested":{"foo":"bar","items":[1,2,3]}}
+
+
+:: NormalPassage
+<<if $condition>>
+content
+<</if>>

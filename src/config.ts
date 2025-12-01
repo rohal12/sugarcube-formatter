@@ -46,6 +46,8 @@ export interface FormatterOptions {
   indentationStyle?: IndentationStyle;
   /** Number of spaces per indent level when using spaces (default: 4) */
   indentationSize?: IndentationSize;
+  /** Format JSON passage content with proper indentation (default: true) */
+  formatJsonPassages?: boolean;
   /**
    * Custom mid-block macro names (from twee-config files).
    * These are children of container macros and should be indented at parent level.
@@ -65,6 +67,7 @@ export const defaultOptions: Required<FormatterOptions> = {
   indentationEnabled: true,
   indentationStyle: "spaces",
   indentationSize: 4,
+  formatJsonPassages: true,
   customMidBlockMacros: [],
 };
 

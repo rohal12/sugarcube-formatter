@@ -2,7 +2,7 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.11",
+  "version": "0.0.14",
   "author": "rohal12",
   "publisher": "rohal12",
   "engines": {
@@ -13,6 +13,27 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "commands": [
+      {
+        "command": "sugarcubeFormatter.formatAllFiles",
+        "title": "Format All Twee Files in Workspace",
+        "category": "SugarCube Formatter"
+      },
+      {
+        "command": "sugarcubeFormatter.formatDirectory",
+        "title": "Format Twee Files in Directory",
+        "category": "SugarCube Formatter"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "sugarcubeFormatter.formatDirectory",
+          "when": "explorerResourceIsFolder",
+          "group": "sugarcube@1"
+        }
+      ]
+    },
     "languages": [
       {
         "id": "twee",

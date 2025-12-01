@@ -78,10 +78,18 @@ function formatMacroArguments(
     );
     const isAfterTo = /\bto\s*$/.test(contextBefore);
 
+    // Check if the content looks like a SugarCube variable (starts with $ or _)
+    const looksLikeVariable = /^[$_]/.test(unescapedContent);
+
+    // Check if we're inside a function call (preceded by '(' or ',')
+    const isInsideFunctionCall = /[\(,]\s*$/.test(contextBefore);
+
     if (
       options.stripSingleWordQuotes &&
       /^[^\s\-\/\\]+$/.test(unescapedContent) &&
-      !isAfterTo
+      !isAfterTo &&
+      !looksLikeVariable &&
+      !isInsideFunctionCall
     ) {
       // Remove quotes for single-word passage names
       result += unescapedContent;
@@ -276,11 +284,14 @@ export function formatSugarCubeDocument(
   text: string,
   options: FormatterOptions = defaultOptions
 ): FormatResult {
+  // Normalize line endings (CRLF -> LF) to handle Windows files
+  const normalizedText = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+
   // Merge provided options with defaults
   const mergedOptions: FormatterOptions = { ...defaultOptions, ...options };
 
   // First pass: detect all block macros (those with closing tags)
-  const blockMacros = detectBlockMacros(text);
+  const blockMacros = detectBlockMacros(normalizedText);
 
   // Build mid-block macros set (built-in SugarCube 2 + custom from twee-config)
   // These are macros that divide a container block into sections (like <<else>> in <<if>>)
@@ -307,7 +318,7 @@ export function formatSugarCubeDocument(
     ...(mergedOptions.customMidBlockMacros ?? []),
   ]);
 
-  const lines = text.split("\n");
+  const lines = normalizedText.split("\n");
   const outputLines: string[] = [];
   let indentLevel = 0;
 

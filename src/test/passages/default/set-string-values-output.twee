@@ -5,3 +5,8 @@
     Go somewhere
 <</link>>
 <<include TestPassage>>
+<<print "_playerName">>
+<<print "$someVar">>
+<<if setup.getFlag("ENCHANTER_FLEE")>>
+    Flee!
+<</if>>

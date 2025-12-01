@@ -1,0 +1,7 @@
+{
+  "description": "Tests for emptyLinesBeforePassages: preserve - keeps original spacing",
+  "options": {
+    "emptyLinesBeforePassages": "preserve"
+  }
+}
+

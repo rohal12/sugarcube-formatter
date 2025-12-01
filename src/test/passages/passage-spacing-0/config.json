@@ -1,0 +1,7 @@
+{
+  "description": "Tests for emptyLinesBeforePassages: 0 - no empty lines before passages",
+  "options": {
+    "emptyLinesBeforePassages": 0
+  }
+}
+

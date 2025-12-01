@@ -170,6 +170,7 @@ export function formatSugarCubeDocument(
   const outputLines: string[] = [];
   let indentLevel = 0;
   const indentStr = "    "; // 4 spaces
+  let seenFirstPassage = false;
 
   // Track which source line each output line comes from
   const formattedLinesBySource = new Map<number, string[]>();
@@ -184,7 +185,13 @@ export function formatSugarCubeDocument(
     const trimmedLine = rawLine.trim();
     const outputForThisLine: string[] = [];
 
-    // Preserve empty lines
+    // Skip leading empty lines before the first passage header
+    if (trimmedLine === "" && !seenFirstPassage) {
+      formattedLinesBySource.set(lineIndex, []);
+      continue;
+    }
+
+    // Preserve empty lines (after first passage)
     if (trimmedLine === "") {
       formattedLinesBySource.set(lineIndex, [""]);
       outputLines.push("");
@@ -193,8 +200,15 @@ export function formatSugarCubeDocument(
 
     // Passage headers - no indentation, reset indent level
     if (trimmedLine.startsWith("::")) {
-      // Ensure exactly 2 empty lines before passage headers (except at start of file)
-      if (outputLines.length > 0) {
+      const isFirstPassage = !seenFirstPassage;
+      seenFirstPassage = true;
+      const emptyLinesSetting = mergedOptions.emptyLinesBeforePassages;
+
+      // Adjust empty lines before passage headers (except for the first passage)
+      // Skip adjustment if "preserve" is set
+      if (!isFirstPassage && emptyLinesSetting !== "preserve") {
+        const targetEmptyLines = emptyLinesSetting as number;
+
         // Count trailing empty lines
         let trailingEmptyCount = 0;
         for (let i = outputLines.length - 1; i >= 0; i--) {
@@ -205,10 +219,10 @@ export function formatSugarCubeDocument(
           }
         }
 
-        // Adjust to exactly 2 empty lines
-        if (trailingEmptyCount < 2) {
+        // Adjust to target number of empty lines
+        if (trailingEmptyCount < targetEmptyLines) {
           // Add missing empty lines to the previous source line's output
-          const emptyLinesToAdd = 2 - trailingEmptyCount;
+          const emptyLinesToAdd = targetEmptyLines - trailingEmptyCount;
           for (let i = 0; i < emptyLinesToAdd; i++) {
             outputLines.push("");
             // Add to the previous non-empty source line's formatted output
@@ -227,9 +241,9 @@ export function formatSugarCubeDocument(
               }
             }
           }
-        } else if (trailingEmptyCount > 2) {
+        } else if (trailingEmptyCount > targetEmptyLines) {
           // Remove excess empty lines
-          const excessLines = trailingEmptyCount - 2;
+          const excessLines = trailingEmptyCount - targetEmptyLines;
           for (let i = 0; i < excessLines; i++) {
             outputLines.pop();
           }

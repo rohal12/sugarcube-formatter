@@ -7,6 +7,15 @@
 export type QuoteStyle = "double" | "single" | "preserve";
 
 /**
+ * Empty lines before passage headers option
+ * - "preserve": Do not modify empty lines before passages
+ * - 0: No empty lines before passages
+ * - 1: One empty line before passages
+ * - 2: Two empty lines before passages (default)
+ */
+export type EmptyLinesBeforePassages = "preserve" | 0 | 1 | 2;
+
+/**
  * Formatter options that can be configured via VS Code settings.
  *
  * This interface is kept separate from vscode-specific code so it can be
@@ -17,6 +26,8 @@ export interface FormatterOptions {
   stripSingleWordQuotes?: boolean;
   /** Quote style for macro arguments (default: "double") */
   quoteStyle?: QuoteStyle;
+  /** Number of empty lines before passage headers (default: 2) */
+  emptyLinesBeforePassages?: EmptyLinesBeforePassages;
 }
 
 /**
@@ -26,6 +37,7 @@ export interface FormatterOptions {
 export const defaultOptions: Required<FormatterOptions> = {
   stripSingleWordQuotes: true,
   quoteStyle: "double",
+  emptyLinesBeforePassages: 2,
 };
 
 /**

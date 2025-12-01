@@ -34,6 +34,12 @@
           "enum": ["double", "single", "preserve"],
           "default": "double",
           "description": "Quote style for macro arguments: 'double' converts to double quotes, 'single' converts to single quotes, 'preserve' keeps original style"
+        },
+        "sugarcubeFormatter.emptyLinesBeforePassages": {
+          "type": ["string", "number"],
+          "enum": ["preserve", 0, 1, 2],
+          "default": 2,
+          "description": "Number of empty lines before passage headers: 'preserve' keeps original spacing, or 0/1/2 for specific line count"
         }
       }
     }

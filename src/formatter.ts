@@ -41,7 +41,8 @@ function formatQuotedString(
 /**
  * Format macro arguments:
  * - Convert quotes according to quoteStyle setting
- * - Optionally remove quotes from single-word arguments (no spaces, dashes, or minuses)
+ * - Optionally remove quotes from single-word arguments that are passage names
+ * - Preserve quotes for string values (after 'to' keyword in assignments)
  * - Handle escaping when content contains quote characters
  */
 function formatMacroArguments(
@@ -51,27 +52,50 @@ function formatMacroArguments(
   const quoteStyle = options.quoteStyle ?? "double";
 
   // Pattern to match quoted arguments (single or double quotes)
-  // Also captures escaped quotes within the string
-  return macroContent.replace(
-    /(['"])((?:[^'"\\]|\\.|(?!\1)['"])*)\1/g,
-    (match, quote, content) => {
-      // Check if content is a single word (no spaces, dashes, slashes, or backslashes)
-      // Also check the unescaped content for this test
-      const unescapedContent = content
-        .replace(/\\'/g, "'")
-        .replace(/\\"/g, '"');
-      if (
-        options.stripSingleWordQuotes &&
-        /^[^\s\-\/\\]+$/.test(unescapedContent)
-      ) {
-        // Remove quotes for single-word arguments
-        // Return unescaped content since quotes are being removed
-        return unescapedContent;
-      }
+  // Group 1: the quote character
+  // Group 2: the quoted content
+  let lastIndex = 0;
+  let result = "";
 
-      return formatQuotedString(quote, content, quoteStyle);
+  const quotePattern = /(['"])((?:[^'"\\]|\\.|(?!\1)['"])*)\1/g;
+  let match;
+
+  while ((match = quotePattern.exec(macroContent)) !== null) {
+    const quote = match[1];
+    const content = match[2];
+    const matchStart = match.index;
+
+    // Add everything before this match
+    result += macroContent.slice(lastIndex, matchStart);
+
+    // Check if content is a single word (no spaces, dashes, slashes, or backslashes)
+    const unescapedContent = content.replace(/\\'/g, "'").replace(/\\"/g, '"');
+
+    // Check the context before the match to see if it's after 'to' keyword
+    const contextBefore = macroContent.slice(
+      Math.max(0, matchStart - 10),
+      matchStart
+    );
+    const isAfterTo = /\bto\s*$/.test(contextBefore);
+
+    if (
+      options.stripSingleWordQuotes &&
+      /^[^\s\-\/\\]+$/.test(unescapedContent) &&
+      !isAfterTo
+    ) {
+      // Remove quotes for single-word passage names
+      result += unescapedContent;
+    } else {
+      result += formatQuotedString(quote, content, quoteStyle);
     }
-  );
+
+    lastIndex = matchStart + match[0].length;
+  }
+
+  // Add remaining content after last match
+  result += macroContent.slice(lastIndex);
+
+  return result;
 }
 
 /**

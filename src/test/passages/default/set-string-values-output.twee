@@ -1,0 +1,7 @@
+:: TestPassage
+<<set _playerName to "Kara", _playerTitle to "Outlander">>
+<<set $name to "John">>
+<<link GoToPassage>>
+    Go somewhere
+<</link>>
+<<include TestPassage>>

@@ -18,7 +18,23 @@
         "extensions": [".twee", ".tw"],
         "configuration": "./language-configuration.json"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "SugarCube Formatter",
+      "properties": {
+        "sugarcubeFormatter.stripSingleWordQuotes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Remove quotes from single-word macro arguments (e.g., \"PassageName\" becomes PassageName)"
+        },
+        "sugarcubeFormatter.quoteStyle": {
+          "type": "string",
+          "enum": ["double", "single", "preserve"],
+          "default": "double",
+          "description": "Quote style for macro arguments: 'double' converts to double quotes, 'single' converts to single quotes, 'preserve' keeps original style"
+        }
+      }
+    }
   },
   "keywords": [
       "twee",

@@ -1,0 +1,7 @@
+{
+  "description": "Tests for quote handling with stripSingleWordQuotes enabled (removes quotes from single-word arguments)",
+  "options": {
+    "stripSingleWordQuotes": true
+  }
+}
+

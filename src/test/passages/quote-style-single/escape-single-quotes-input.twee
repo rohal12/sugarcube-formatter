@@ -1,0 +1,6 @@
+:: Test
+<<set $var to "it's a test, \"bud\"">>
+<<set $msg to "don't worry, \"bud\"">>
+
+
+:: End

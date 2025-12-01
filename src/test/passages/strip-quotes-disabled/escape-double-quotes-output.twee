@@ -1,0 +1,6 @@
+:: Test
+<<set $var to "He said \"hello, it's me\"">>
+<<set $msg to "The \"quoted\" word">>
+
+
+:: End

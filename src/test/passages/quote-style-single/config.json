@@ -1,0 +1,8 @@
+{
+  "description": "Tests for quoteStyle: single - converts all quotes to single quotes",
+  "options": {
+    "quoteStyle": "single",
+    "stripSingleWordQuotes": false
+  }
+}
+

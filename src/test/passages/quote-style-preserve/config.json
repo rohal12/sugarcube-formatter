@@ -1,0 +1,8 @@
+{
+  "description": "Tests for quoteStyle: preserve - keeps original quote style",
+  "options": {
+    "quoteStyle": "preserve",
+    "stripSingleWordQuotes": false
+  }
+}
+

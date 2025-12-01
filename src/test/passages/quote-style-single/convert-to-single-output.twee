@@ -1,0 +1,10 @@
+:: Test
+<<include 'PassageName'>>
+<<set $var to 'hello world'>>
+<<goto 'AlreadySingle'>>
+
+
+:: PassageName
+
+
+:: AlreadySingle

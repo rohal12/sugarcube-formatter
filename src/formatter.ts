@@ -1,19 +1,77 @@
+import { FormatterOptions, defaultOptions, QuoteStyle } from "./config";
+
+/**
+ * Escape quotes in content when converting to a different quote style.
+ * Uses backslash escaping for the target quote character.
+ */
+function escapeQuotes(content: string, targetQuote: string): string {
+  // Unescape any existing escaped quotes first, then escape the target quote
+  // This handles cases where content already has escaped quotes
+  const unescaped = content.replace(/\\'/g, "'").replace(/\\"/g, '"');
+
+  if (targetQuote === '"') {
+    return unescaped.replace(/"/g, '\\"');
+  } else {
+    return unescaped.replace(/'/g, "\\'");
+  }
+}
+
+/**
+ * Format a quoted string according to the quote style option.
+ * Handles escaping when the content contains the target quote character.
+ */
+function formatQuotedString(
+  originalQuote: string,
+  content: string,
+  quoteStyle: QuoteStyle
+): string {
+  if (quoteStyle === "preserve") {
+    // Keep the original quote style, but ensure proper escaping
+    return `${originalQuote}${escapeQuotes(
+      content,
+      originalQuote
+    )}${originalQuote}`;
+  }
+
+  const targetQuote = quoteStyle === "single" ? "'" : '"';
+  const escapedContent = escapeQuotes(content, targetQuote);
+  return `${targetQuote}${escapedContent}${targetQuote}`;
+}
+
 /**
  * Format macro arguments:
- * - Convert single quotes to double quotes
- * - Remove quotes from single-word arguments (no spaces, dashes, or minuses)
+ * - Convert quotes according to quoteStyle setting
+ * - Optionally remove quotes from single-word arguments (no spaces, dashes, or minuses)
+ * - Handle escaping when content contains quote characters
  */
-function formatMacroArguments(macroContent: string): string {
+function formatMacroArguments(
+  macroContent: string,
+  options: FormatterOptions
+): string {
+  const quoteStyle = options.quoteStyle ?? "double";
+
   // Pattern to match quoted arguments (single or double quotes)
-  return macroContent.replace(/(['"])([^'"]*)\1/g, (match, quote, content) => {
-    // Check if content is a single word (no spaces, dashes, or minuses)
-    if (/^[^\s\-]+$/.test(content)) {
-      // Remove quotes for single-word arguments
-      return content;
+  // Also captures escaped quotes within the string
+  return macroContent.replace(
+    /(['"])((?:[^'"\\]|\\.|(?!\1)['"])*)\1/g,
+    (match, quote, content) => {
+      // Check if content is a single word (no spaces, dashes, or minuses)
+      // Also check the unescaped content for this test
+      const unescapedContent = content
+        .replace(/\\'/g, "'")
+        .replace(/\\"/g, '"');
+      if (
+        options.stripSingleWordQuotes &&
+        /^[^\s\-]+$/.test(unescapedContent)
+      ) {
+        // Remove quotes for single-word arguments
+        // Return unescaped content since quotes are being removed
+        return unescapedContent;
+      }
+
+      return formatQuotedString(quote, content, quoteStyle);
     }
-    // Convert to double quotes
-    return `"${content}"`;
-  });
+  );
 }
 
 /**
@@ -40,7 +98,7 @@ interface Token {
   macroName?: string;
 }
 
-function tokenizeLine(line: string): Token[] {
+function tokenizeLine(line: string, options: FormatterOptions): Token[] {
   const tokens: Token[] = [];
   // Match: closing tags <</name>>, opening tags <<name...>>, or text content
   const pattern = /<<\/(\w+)>>|<<(\w+)[^>]*>>|[^<]+|</g;
@@ -63,7 +121,7 @@ function tokenizeLine(line: string): Token[] {
       // Opening tag <<name...>>
       const macroName = match[2];
       // Format macro arguments (convert quotes, remove unnecessary quotes)
-      const formattedValue = formatMacroArguments(fullMatch);
+      const formattedValue = formatMacroArguments(fullMatch, options);
       tokens.push({
         value: formattedValue,
         type: "opening-macro",
@@ -90,7 +148,13 @@ export interface FormatResult {
  * Format a SugarCube/Twee document
  * Returns formatted text and a mapping of source line index to formatted lines
  */
-export function formatSugarCubeDocument(text: string): FormatResult {
+export function formatSugarCubeDocument(
+  text: string,
+  options: FormatterOptions = defaultOptions
+): FormatResult {
+  // Merge provided options with defaults
+  const mergedOptions: FormatterOptions = { ...defaultOptions, ...options };
+
   // First pass: detect all block macros (those with closing tags)
   const blockMacros = detectBlockMacros(text);
 
@@ -183,7 +247,7 @@ export function formatSugarCubeDocument(text: string): FormatResult {
     }
 
     // Tokenize the line
-    const tokens = tokenizeLine(trimmedLine);
+    const tokens = tokenizeLine(trimmedLine, mergedOptions);
 
     // Process each token
     for (let i = 0; i < tokens.length; i++) {

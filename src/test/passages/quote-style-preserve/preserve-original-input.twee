@@ -1,0 +1,10 @@
+:: Test
+<<include "DoubleQuoted with ' quote">>
+<<goto 'SingleQuoted with " quote'>>
+<<set $var to "mixed content">>
+
+
+:: DoubleQuoted with ' quote
+
+
+:: SingleQuoted with " quote

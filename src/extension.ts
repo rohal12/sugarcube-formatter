@@ -2,6 +2,18 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { formatSugarCubeDocument } from "./formatter";
+import { buildFormatterOptions, FormatterOptions } from "./config";
+
+/**
+ * Read formatter options from VS Code workspace configuration.
+ * Automatically reads all options defined in defaultOptions.
+ */
+function getFormatterOptions(): FormatterOptions {
+  const config = vscode.workspace.getConfiguration("sugarcubeFormatter");
+  return buildFormatterOptions((key, defaultValue) =>
+    config.get(key, defaultValue)
+  );
+}
 
 const documentSelector: vscode.DocumentSelector = [
   {
@@ -34,7 +46,10 @@ export function activate(context: vscode.ExtensionContext) {
         const text = document.getText();
 
         // Format the document and get line mappings
-        const { formattedLinesBySource } = formatSugarCubeDocument(text);
+        const { formattedLinesBySource } = formatSugarCubeDocument(
+          text,
+          getFormatterOptions()
+        );
 
         // Generate edits for each source line that changed
         for (const [

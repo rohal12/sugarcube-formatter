@@ -55,14 +55,14 @@ function formatMacroArguments(
   return macroContent.replace(
     /(['"])((?:[^'"\\]|\\.|(?!\1)['"])*)\1/g,
     (match, quote, content) => {
-      // Check if content is a single word (no spaces, dashes, or minuses)
+      // Check if content is a single word (no spaces, dashes, slashes, or backslashes)
       // Also check the unescaped content for this test
       const unescapedContent = content
         .replace(/\\'/g, "'")
         .replace(/\\"/g, '"');
       if (
         options.stripSingleWordQuotes &&
-        /^[^\s\-]+$/.test(unescapedContent)
+        /^[^\s\-\/\\]+$/.test(unescapedContent)
       ) {
         // Remove quotes for single-word arguments
         // Return unescaped content since quotes are being removed

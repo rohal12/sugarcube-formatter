@@ -1,6 +1,8 @@
 :: Passage 4
 <<if Quests.test.stage >= 2>>
 	<p>test.</p>
+    <<include "Passage 4">>
 <<else>>
 	<p>test.</p>
+    <<include "Passage 4">>
 <</if>>

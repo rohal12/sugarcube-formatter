@@ -1,0 +1,7 @@
+{
+  "description": "Tests for custom mid-block macros from twee-config (container children)",
+  "options": {
+    "customMidBlockMacros": ["subtag", "options"]
+  }
+}
+

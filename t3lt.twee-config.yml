@@ -1,10 +1,19 @@
 sugarcube-2:
-  macros:
-    customcontainer:
-      name: customcontainer
-      container: true
-    subtag:
-      name: subtag
-    container:
-      name: container
-      container: true
+    macros:
+        customcontainer:
+            name: customcontainer
+            container: true
+            children:
+                - subtag
+        subtag:
+            name: subtag
+        container:
+            name: container
+            container: true
+        menu:
+            name: menu
+            container: true
+            children:
+                - options
+        options:
+            name: options

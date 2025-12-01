@@ -1,0 +1,16 @@
+:: Test
+<<customcontainer test>>
+    payload content
+<<subtag>>
+    more content
+<</customcontainer>>
+
+
+:: Test2
+<<menu>>
+    First item
+<<options>>
+    Second item
+<<options>>
+    Third item
+<</menu>>

@@ -7,7 +7,7 @@ This is a test passage.
 <</if>>
 <<customcontainer argument>>
     payload
-<<subtag>>
+    <<subtag>>
     <<container>>
         "World"
     <</container>>

@@ -168,6 +168,31 @@ export function formatSugarCubeDocument(
   // First pass: detect all block macros (those with closing tags)
   const blockMacros = detectBlockMacros(text);
 
+  // Build mid-block macros set (built-in SugarCube 2 + custom from twee-config)
+  // These are macros that divide a container block into sections (like <<else>> in <<if>>)
+  // Built-in children from: https://github.com/cyrusfirheir/twee3-language-tools/blob/master/src/sugarcube-2/macros.json
+  const midBlockMacros = new Set([
+    // <<if>> children
+    "else",
+    "elseif",
+    // <<switch>> children
+    "case",
+    "default",
+    // <<repeat>> children (<<stop>> terminates the repeat)
+    "stop",
+    // <<timed>> children (<<next>> starts next timed section)
+    "next",
+    // <<listbox>>, <<cycle>>, <<linkbox>> children (<<option>> defines options)
+    "option",
+    "optionsfrom",
+    // <<createaudiogroup>> children
+    "track",
+    // Note: <<break>> and <<continue>> are NOT mid-block macros - they're just
+    // statements valid inside <<for>> loops and should be indented normally
+    // Custom from twee-config files
+    ...(mergedOptions.customMidBlockMacros ?? []),
+  ]);
+
   const lines = text.split("\n");
   const outputLines: string[] = [];
   let indentLevel = 0;
@@ -300,14 +325,14 @@ export function formatSugarCubeDocument(
           outputForThisLine.push(formattedLine);
           outputLines.push(formattedLine);
           indentLevel++;
-        } else if (indentLevel > 0) {
-          // Non-block macro inside a block - output at parent level (like <<else>>)
+        } else if (indentLevel > 0 && midBlockMacros.has(token.macroName!)) {
+          // Mid-block macro (else, elseif, case, default, or custom) - output at parent level
           const prevIndent = indentLevel - 1;
           formattedLine = indentStr.repeat(prevIndent) + token.value;
           outputForThisLine.push(formattedLine);
           outputLines.push(formattedLine);
         } else {
-          // Non-block macro at top level - output at current level
+          // Regular macro - output at current indent level (like text content)
           formattedLine = indentStr.repeat(indentLevel) + token.value;
           outputForThisLine.push(formattedLine);
           outputLines.push(formattedLine);

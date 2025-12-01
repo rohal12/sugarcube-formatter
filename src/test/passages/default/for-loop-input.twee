@@ -1,0 +1,10 @@
+:: Test
+<<for _i to 0; _i < 10; _i++>>
+Processing item _i
+<<if _i === 5>>
+<<break>>
+<</if>>
+<<if _i === 3>>
+<<continue>>
+<</if>>
+<</for>>

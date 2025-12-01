@@ -3,6 +3,7 @@
 import * as vscode from "vscode";
 import { formatSugarCubeDocument } from "./formatter";
 import { buildFormatterOptions, FormatterOptions } from "./config";
+import { loadTweeConfig } from "./twee-config";
 
 /**
  * Read formatter options from VS Code workspace configuration.
@@ -13,6 +14,29 @@ function getFormatterOptions(): FormatterOptions {
   return buildFormatterOptions((key, defaultValue) =>
     config.get(key, defaultValue)
   );
+}
+
+/**
+ * Get the workspace root directory for loading twee-config files.
+ */
+function getWorkspaceRoot(): string | undefined {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    return workspaceFolders[0].uri.fsPath;
+  }
+  return undefined;
+}
+
+/**
+ * Load custom mid-block macros from twee-config files in the workspace root.
+ */
+function getCustomMidBlockMacros(): string[] {
+  const rootDir = getWorkspaceRoot();
+  if (!rootDir) {
+    return [];
+  }
+  const tweeConfig = loadTweeConfig(rootDir);
+  return tweeConfig.customMidBlockMacros;
 }
 
 const documentSelector: vscode.DocumentSelector = [
@@ -45,10 +69,14 @@ export function activate(context: vscode.ExtensionContext) {
         const edits: vscode.TextEdit[] = [];
         const text = document.getText();
 
+        // Get formatter options and add custom mid-block macros from twee-config
+        const options = getFormatterOptions();
+        options.customMidBlockMacros = getCustomMidBlockMacros();
+
         // Format the document and get line mappings
         const { formattedLinesBySource } = formatSugarCubeDocument(
           text,
-          getFormatterOptions()
+          options
         );
 
         // Generate edits for each source line that changed

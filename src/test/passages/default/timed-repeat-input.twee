@@ -1,0 +1,14 @@
+:: Test
+<<timed 2s>>
+First content
+<<next 1s>>
+Second content
+<<next>>
+Third content
+<</timed>>
+
+<<repeat 1s>>
+Repeating content
+<<stop>>
+<</repeat>>
+

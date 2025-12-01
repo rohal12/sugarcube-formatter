@@ -2,7 +2,7 @@
   "name": "sugarcube-formatter",
   "displayName": "sugarcube-formatter",
   "description": "format sugarcube twine code",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "rohal12",
   "publisher": "rohal12",
   "engines": {
@@ -16,8 +16,14 @@
     "languages": [
       {
         "id": "twee",
-        "aliases": ["Twee", "SugarCube"],
-        "extensions": [".twee", ".tw"],
+        "aliases": [
+          "Twee",
+          "SugarCube"
+        ],
+        "extensions": [
+          ".twee",
+          ".tw"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -31,13 +37,25 @@
         },
         "sugarcubeFormatter.quoteStyle": {
           "type": "string",
-          "enum": ["double", "single", "preserve"],
+          "enum": [
+            "double",
+            "single",
+            "preserve"
+          ],
           "default": "double",
           "description": "Quote style for macro arguments: 'double' converts to double quotes, 'single' converts to single quotes, 'preserve' keeps original style"
         },
         "sugarcubeFormatter.emptyLinesBeforePassages": {
-          "type": ["string", "number"],
-          "enum": ["preserve", 0, 1, 2],
+          "type": [
+            "string",
+            "number"
+          ],
+          "enum": [
+            "preserve",
+            0,
+            1,
+            2
+          ],
           "default": 2,
           "description": "Number of empty lines before passage headers: 'preserve' keeps original spacing, or 0/1/2 for specific line count"
         },
@@ -48,13 +66,19 @@
         },
         "sugarcubeFormatter.indentationStyle": {
           "type": "string",
-          "enum": ["spaces", "tabs"],
+          "enum": [
+            "spaces",
+            "tabs"
+          ],
           "default": "spaces",
           "description": "Indentation style: 'spaces' or 'tabs'"
         },
         "sugarcubeFormatter.indentationSize": {
           "type": "number",
-          "enum": [2, 4],
+          "enum": [
+            2,
+            4
+          ],
           "default": 4,
           "description": "Number of spaces per indent level (only applies when indentationStyle is 'spaces')"
         }
@@ -62,17 +86,17 @@
     }
   },
   "keywords": [
-      "twee",
-      "twee3",
-      "twee3-sugarcube-2",
-      "twine"
+    "twee",
+    "twee3",
+    "twee3-sugarcube-2",
+    "twine"
   ],
   "repository": {
-      "type": "git",
-      "url": "https://github.com/rohal12/sugarcube-formatter.git"
+    "type": "git",
+    "url": "https://github.com/rohal12/sugarcube-formatter.git"
   },
   "bugs": {
-      "url": "https://github.com/rohal12/sugarcube-formatter/issues"
+    "url": "https://github.com/rohal12/sugarcube-formatter/issues"
   },
   "activationEvents": [
     "workspaceContains:**/*.{tw,twee}",
@@ -87,14 +111,18 @@
     "lint": "eslint src",
     "test": "vscode-test"
   },
+  "dependencies": {
+    "js-yaml": "^4.1.1"
+  },
   "devDependencies": {
-    "@types/vscode": "^1.105.1",
+    "@types/js-yaml": "^4.0.9",
     "@types/mocha": "^10.0.10",
     "@types/node": "22.x",
-    "typescript-eslint": "^8.46.3",
+    "@types/vscode": "^1.105.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
     "eslint": "^9.39.1",
     "typescript": "^5.9.3",
-    "@vscode/test-cli": "^0.0.12",
-    "@vscode/test-electron": "^2.5.2"
+    "typescript-eslint": "^8.46.3"
   }
 }

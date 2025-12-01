@@ -46,6 +46,12 @@ export interface FormatterOptions {
   indentationStyle?: IndentationStyle;
   /** Number of spaces per indent level when using spaces (default: 4) */
   indentationSize?: IndentationSize;
+  /**
+   * Custom mid-block macro names (from twee-config files).
+   * These are children of container macros and should be indented at parent level.
+   * This is not a VS Code setting - it's loaded from *.twee-config.yml/json files.
+   */
+  customMidBlockMacros?: string[];
 }
 
 /**
@@ -59,6 +65,7 @@ export const defaultOptions: Required<FormatterOptions> = {
   indentationEnabled: true,
   indentationStyle: "spaces",
   indentationSize: 4,
+  customMidBlockMacros: [],
 };
 
 /**

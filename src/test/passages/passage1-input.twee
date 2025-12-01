@@ -2,7 +2,9 @@
 This is a test passage. <<if $varfoo === 1>>
 "Hello"
 <<else>>
+<<container>>
 "World"
+<</container>>
 <</if>>
 
     [[continue]]

@@ -3,7 +3,9 @@ This is a test passage.
 <<if $varfoo === 1>>
     "Hello"
 <<else>>
-    "World"
+    <<container>>
+        "World"
+    <</container>>
 <</if>>
 
 [[continue]]

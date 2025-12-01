@@ -18,12 +18,6 @@
         "extensions": [".twee", ".tw"],
         "configuration": "./language-configuration.json"
       }
-    ],
-    "commands": [
-      {
-        "command": "sugarcube-formatter.helloWorld",
-        "title": "Hello World"
-      }
     ]
   },
   "keywords": [

@@ -5,3 +5,6 @@ sugarcube-2:
       container: true
     subtag:
       name: subtag
+    container:
+      name: container
+      container: true
